@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1064599919892",
+    "project_id": "ai-jobagent-855a7",
+    "storage_bucket": "ai-jobagent-855a7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1064599919892:android:8ebd1a8f20cbc54efef601",
+        "android_client_info": {
+          "package_name": "com.example.ai_jobagent"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7jyWcyWCz0_Iv3VKlIfZXbgm89mDhZ1E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

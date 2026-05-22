@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8FAFC"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="✍️ 명세서 규격 AI 이력서 작성"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#1E293B"
+            android:layout_gravity="start"
+            android:layout_marginBottom="20dp" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="100dp"
+            android:layout_height="120dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp"
+            android:layout_marginBottom="8dp">
+            <ImageView
+                android:id="@+id/ivProfile"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@android:drawable/ic_menu_camera"
+                app:tint="#94A3B8" />
+        </androidx.cardview.widget.CardView>
+
+        <Button
+            android:id="@+id/btnPickPhoto"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="사진 선택하기"
+            android:textColor="#5D5FEF"
+            android:layout_marginBottom="16dp" />
+
+        <EditText
+            android:id="@+id/etSkills"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="보유 기술 스택 (쉼표 기호로 구분)"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="@android:drawable/editbox_background_normal"
+            android:textColor="#1E293B"/>
+
+        <EditText
+            android:id="@+id/etProjects"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:hint="주요 프로젝트 성과"
+            android:padding="12dp"
+            android:gravity="top"
+            android:layout_marginBottom="12dp"
+            android:inputType="textMultiLine"
+            android:background="@android:drawable/editbox_background_normal"
+            android:textColor="#1E293B"/>
+
+        <EditText
+            android:id="@+id/etAwards"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="수상 내역 (Awards)"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="@android:drawable/editbox_background_normal"
+            android:textColor="#1E293B"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:layout_marginBottom="12dp">
+            <EditText
+                android:id="@+id/etGpa"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:hint="학점 (GPA)"
+                android:padding="12dp"
+                android:layout_marginEnd="4dp"
+                android:inputType="numberDecimal"
+                android:background="@android:drawable/editbox_background_normal"
+                android:textColor="#1E293B"/>
+            <EditText
+                android:id="@+id/etCert"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:hint="자격증"
+                android:padding="12dp"
+                android:layout_marginStart="4dp"
+                android:background="@android:drawable/editbox_background_normal"
+                android:textColor="#1E293B"/>
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/etHighlight"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="나의 핵심 강점 (Highlight)"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"
+            android:background="@android:drawable/editbox_background_normal"
+            android:textColor="#1E293B"/>
+
+        <TextView
+            android:id="@+id/tvAiKeywords"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#EEF2F6"
+            android:padding="14dp"
+            android:text="🤖 추천 직군 상태: 데이터 분석 대기 중"
+            android:textColor="#475569"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            android:layout_marginBottom="20dp" />
+
+        <Button
+            android:id="@+id/btnCreateResume"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="이력서 만들기"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:backgroundTint="#5D5FEF"
+            android:layout_marginTop="10dp" />
+    </LinearLayout>
+</ScrollView>
