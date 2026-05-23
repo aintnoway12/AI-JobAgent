@@ -51,7 +51,6 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "항목을 기입해 주세요.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
             auth.signInWithEmailAndPassword(email, pw)
                 .addOnSuccessListener {
                     Toast.makeText(this, "로그인 인증 통과!", Toast.LENGTH_SHORT).show()
@@ -105,7 +104,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun goToResumeWrite() {
-        startActivity(Intent(this, ResumeWriteActivity::class.java))
+        startActivity(Intent(this, HomeActivity::class.java))
         finish()
     }
 }
