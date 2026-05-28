@@ -1,7 +1,9 @@
 package com.example.ai_jobagent
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -82,6 +84,10 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun showFragment(fragment: Fragment) {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val view = currentFocus ?: window.decorView
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+
         supportFragmentManager.beginTransaction()
             .hide(activeFragment)
             .show(fragment)

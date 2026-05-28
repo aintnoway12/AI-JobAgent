@@ -9,8 +9,7 @@ object ApiConstants {
     const val GEMINI_BASE_URL =
         "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
 
-    //NOTICE
-    const val ALIO_API_KEY = "MjM3MDRkMDIxZjdlOTM4ZjcyY2UxYTc3MWI5MTEzNjFkYTA5N2I2MzNjNTY1M2ZhMmVjZTAwN2I4OGRiMzVlNg=="
-    const val ALIO_RECRUIT_LIST_URL = "https://opendata.alio.go.kr/v1/recruit/list.do"
-    const val ALIO_RECRUIT_DETAIL_URL = "https://opendata.alio.go.kr/v1/recruit/detail.do"
+    // Stack Overflow
+    const val SO_API_KEY = "rl_J2HeUBQifdfUDMBoi8Zn9wCYk"
+    const val SO_SEARCH_URL = "https://api.stackexchange.com/2.3/search/advanced"
 }

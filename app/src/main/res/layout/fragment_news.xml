@@ -79,7 +79,7 @@
         android:layout_height="1dp"
         android:background="#E2E8F0" />
 
-    <!-- 채용정보 + 달력 섹션: 화면 2/3, 내부 스크롤 -->
+    <!-- 기술 트렌드 섹션: 화면 2/3, 내부 스크롤 -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -87,7 +87,7 @@
         android:fillViewport="true">
 
         <FrameLayout
-            android:id="@+id/recruitContainer"
+            android:id="@+id/techTrendContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

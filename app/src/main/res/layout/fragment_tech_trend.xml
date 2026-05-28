@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#F8FAFC">
+
+    <!-- 섹션 헤더 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="2dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="최신 기술 트렌드"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="#1E293B" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stack Overflow"
+            android:textSize="11sp"
+            android:textColor="#94A3B8" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvTechKeyword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="8dp"
+        android:textSize="12sp"
+        android:textColor="#5D5FEF" />
+
+    <!-- 로딩 -->
+    <ProgressBar
+        android:id="@+id/progressBarTech"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginVertical="20dp"
+        android:visibility="gone" />
+
+    <!-- 빈 상태 -->
+    <TextView
+        android:id="@+id/tvTechEmptyState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginVertical="20dp"
+        android:text="트렌드 정보를 불러오지 못했습니다."
+        android:textColor="#94A3B8"
+        android:textSize="13sp"
+        android:visibility="gone" />
+
+    <!-- 결과 목록 (NestedScrollView 내 스크롤 위임) -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvTechTrend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:nestedScrollingEnabled="false"
+        android:paddingBottom="12dp"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+</LinearLayout>

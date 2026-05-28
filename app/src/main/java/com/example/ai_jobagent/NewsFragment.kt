@@ -43,9 +43,9 @@ class NewsFragment : Fragment() {
 
         binding.vpNews.adapter = newsAdapter
 
-        if (childFragmentManager.findFragmentById(R.id.recruitContainer) == null) {
+        if (childFragmentManager.findFragmentById(R.id.techTrendContainer) == null) {
             childFragmentManager.beginTransaction()
-                .replace(R.id.recruitContainer, RecruitFragment())
+                .replace(R.id.techTrendContainer, TechTrendFragment())
                 .commitNow()
         }
 
