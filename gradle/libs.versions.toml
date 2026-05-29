@@ -28,6 +28,7 @@ androidx-library = { group = "androidx.databinding", name = "library", version.r
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 litert = { group = "com.google.ai.edge.litert", name = "litert", version.ref = "litert" }
 
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
