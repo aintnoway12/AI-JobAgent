@@ -5,7 +5,7 @@ object ApiConstants {
     const val NAVER_CLIENT_SECRET = "2bqZARfj91"
     const val NAVER_NEWS_URL = "https://openapi.naver.com/v1/search/news.json"
 
-    const val GEMINI_API_KEY = "AIzaSyDnS0mZVxX4zeFP8DKkKrmgCS17Xb7IFaQ"
+    const val GEMINI_API_KEY = "AQ.Ab8RN6IaS1zWJIw7a9erVI0K64RlJC4XkfdRo0hMiIEz2yfrIA"
     const val GEMINI_BASE_URL =
         "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
 

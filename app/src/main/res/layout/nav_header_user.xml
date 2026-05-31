@@ -2,8 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
-    android:background="#5D5FEF"
+    android:layout_height="wrap_content" android:background="#5D5FEF"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:padding="24dp">
@@ -34,6 +33,53 @@
         android:layout_marginTop="4dp"
         android:text="email@example.com"
         android:textColor="#E0E0E0"
-        android:textSize="13sp" />
+        android:textSize="13sp"
+        android:layout_marginBottom="16dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#80FFFFFF"
+        android:layout_marginBottom="12dp"/>
+
+    <TextView
+        android:id="@+id/btnChangeId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="아이디(닉네임) 변경"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:paddingVertical="6dp"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/btnChangePw"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="비밀번호 변경"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:paddingVertical="6dp"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/btnLogout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="로그아웃"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:paddingVertical="6dp"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/btnDeleteAccount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="회원 탈퇴"
+        android:textColor="#FFCDD2"
+        android:textSize="14sp"
+        android:paddingVertical="6dp"
+        android:gravity="center"/>
 
 </LinearLayout>

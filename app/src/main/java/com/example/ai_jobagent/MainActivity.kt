@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.ai_jobagent.databinding.ActivityMainBinding
+import com.google.firebase.FirebaseApp
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -28,6 +29,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        FirebaseApp.initializeApp(this)
 
         auth = Firebase.auth
         db = Firebase.firestore
@@ -63,10 +66,12 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnRegDone.setOnClickListener {
             val email = binding.etRegEmail.text.toString().trim()
+            val name = binding.etRegName.text.toString().trim() // Added name variable
             val nickname = binding.etRegId.text.toString().trim()
             val pw = binding.etRegPw.text.toString().trim()
 
-            if (email.isEmpty() || nickname.isEmpty() || pw.isEmpty()) {
+            // Added name validation
+            if (email.isEmpty() || name.isEmpty() || nickname.isEmpty() || pw.isEmpty()) {
                 Toast.makeText(this, "모든 정보를 입력해 주세요.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -78,6 +83,7 @@ class MainActivity : AppCompatActivity() {
 
                     val userProfile = hashMapOf(
                         "email" to email,
+                        "name" to name, // Added name to Firestore map
                         "nickname" to nickname,
                         "photoUrl" to null,
                         "createdAt" to Timestamp.now()

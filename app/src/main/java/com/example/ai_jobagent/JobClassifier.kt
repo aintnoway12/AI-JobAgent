@@ -50,12 +50,13 @@ class JobClassifier(ctx: Context) {
         val cleanText = text.replace(Regex("[^a-zA-Z0-9가-힣\\s]"), " ").lowercase()
         val tokens = cleanText.split(Regex("\\s+")).filter { it.isNotEmpty() }.take(64)
 
-        // 패딩 처리된 입력 배열 생성
+        // 🚨 수정된 부분: IntArray를 FloatArray로 변경하고 .toFloat() 적용
         val inputSpace = FloatArray(64) { i ->
             val token = tokens.getOrNull(i)
             (vocab[token] ?: 0).toFloat()
         }
 
+        // 이제 inputArr는 [[F (FLOAT32) 형태가 됩니다.
         val inputArr = arrayOf(inputSpace)
         val outputArr = Array(1) { FloatArray(labels.size) }
 

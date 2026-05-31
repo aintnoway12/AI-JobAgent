@@ -38,6 +38,7 @@ class ResumeWriteActivity : AppCompatActivity() {
 
     private val pickPhoto = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         uri?.let {
+            binding.ivProfile.imageTintList = null
             binding.ivProfile.setImageURI(it)
             uploadProfilePhoto(it)
         }
