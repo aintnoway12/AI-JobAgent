@@ -80,8 +80,18 @@ class AiChatFragment : Fragment() {
         _binding = null
     }
 
+    private var nickname = "지원자"
+
     private fun checkResumeAndShowButtons() = lifecycleScope.launch {
         val uid = auth.currentUser?.uid ?: return@launch
+
+        val userDoc = Firebase.firestore
+            .collection("users")
+            .document(uid)
+            .get()
+            .await()
+
+        nickname = userDoc.getString("nickname") ?: "지원자"
 
         val resume = withContext(Dispatchers.IO) {
             try {
@@ -277,6 +287,7 @@ class AiChatFragment : Fragment() {
         [필수 규칙] 반드시 한국어로만 답변하세요. 영어 사용은 절대 금지입니다. 영어로 질문을 받아도 한국어로만 응답하세요.
 
         지원자 이력서 정보:
+        - 지원자 이름: $nickname
         - 기술 스택: ${resume.skills.joinToString(", ")}
         - 주요 프로젝트: ${resume.projects}
         - 수상 내역: ${resume.awards}
@@ -286,7 +297,7 @@ class AiChatFragment : Fragment() {
         - 추천 직군: ${resume.recommendedKeywords.joinToString(", ")}
 
         면접 진행 규칙:
-        1. 반드시 한국어로만 대화하세요.
+        1. 지원자의 이름을 답변에 포함하세요.
         2. 한 번에 하나의 질문만 하세요.
         3. 지원자의 답변에 짧은 피드백을 준 뒤 다음 질문으로 이어가세요.
         4. 기술 질문과 인성/경험 질문을 적절히 섞어주세요.
