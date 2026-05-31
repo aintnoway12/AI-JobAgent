@@ -139,6 +139,40 @@
             android:textColor="#FFFFFF"
             android:textStyle="bold"
             android:backgroundTint="#5D5FEF"
-            android:layout_marginTop="10dp" />
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- 💡 새로 추가된 보기 모드 버튼 영역 (수정/삭제) -->
+        <LinearLayout
+            android:id="@+id/layoutViewButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:layout_marginBottom="16dp">
+
+            <Button
+                android:id="@+id/btnEditResume"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="수정하기"
+                android:textColor="#5D5FEF"
+                app:strokeColor="#5D5FEF"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnDeleteResume"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:text="삭제하기"
+                android:backgroundTint="#F44336"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold" />
+        </LinearLayout>
+
     </LinearLayout>
 </ScrollView>

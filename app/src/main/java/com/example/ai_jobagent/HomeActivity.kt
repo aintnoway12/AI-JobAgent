@@ -4,10 +4,14 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.ai_jobagent.databinding.ActivityHomeBinding
 import com.example.ai_jobagent.databinding.NavHeaderUserBinding
@@ -15,6 +19,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class HomeActivity : AppCompatActivity() {
 
@@ -33,6 +39,7 @@ class HomeActivity : AppCompatActivity() {
 
         auth = Firebase.auth
 
+        // 로그인되지 않은 상태면 메인(로그인) 화면으로 이동
         if (auth.currentUser == null) {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
@@ -51,6 +58,9 @@ class HomeActivity : AppCompatActivity() {
         setupFragments()
         setupBottomNavigation()
         loadUserInfoIntoDrawer()
+
+        // 사이드 메뉴 설정 버튼들(변경, 로그아웃, 탈퇴) 클릭 이벤트 등록
+        setupHeaderButtons()
     }
 
     private fun setupFragments() {
@@ -136,6 +146,151 @@ class HomeActivity : AppCompatActivity() {
                         .into(headerBinding.ivUserPhoto)
                 }
             }
+    }
+
+    // ==========================================
+    // 설정 관련 로직 (아이디, 비밀번호, 로그아웃, 탈퇴)
+    // ==========================================
+
+    private fun setupHeaderButtons() {
+        val headerView = binding.navView.getHeaderView(0)
+        val headerBinding = NavHeaderUserBinding.bind(headerView)
+
+        headerBinding.btnChangeId.setOnClickListener { showChangeIdDialog() }
+        headerBinding.btnChangePw.setOnClickListener { showChangePwDialog() }
+        headerBinding.btnLogout.setOnClickListener { showLogoutDialog() }
+        headerBinding.btnDeleteAccount.setOnClickListener { showDeleteAccountDialog() }
+    }
+
+    // 1. 아이디(닉네임) 변경
+    private fun showChangeIdDialog() {
+        val editText = EditText(this)
+        editText.hint = "새로운 아이디(닉네임) 입력"
+
+        AlertDialog.Builder(this)
+            .setTitle("아이디 변경")
+            .setView(editText)
+            .setPositiveButton("변경") { _, _ ->
+                val newNickname = editText.text.toString().trim()
+                if (newNickname.isNotEmpty()) {
+                    changeNickname(newNickname)
+                }
+            }
+            .setNegativeButton("취소", null)
+            .show()
+    }
+
+    private fun changeNickname(newNickname: String) {
+        val uid = auth.currentUser?.uid
+        val db = Firebase.firestore
+
+        if (uid != null) {
+            lifecycleScope.launch {
+                try {
+                    db.collection("users").document(uid).update("nickname", newNickname).await()
+                    Toast.makeText(this@HomeActivity, "아이디가 변경되었습니다.", Toast.LENGTH_SHORT).show()
+
+                    // 즉시 UI 업데이트
+                    val headerView = binding.navView.getHeaderView(0)
+                    val headerBinding = NavHeaderUserBinding.bind(headerView)
+                    headerBinding.tvNickname.text = newNickname
+                } catch (e: Exception) {
+                    Toast.makeText(this@HomeActivity, "오류: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    // 2. 비밀번호 변경
+    private fun showChangePwDialog() {
+        val editText = EditText(this)
+        editText.hint = "새로운 비밀번호 입력"
+
+        AlertDialog.Builder(this)
+            .setTitle("비밀번호 변경")
+            .setView(editText)
+            .setPositiveButton("변경") { _, _ ->
+                val newPassword = editText.text.toString().trim()
+                if (newPassword.isNotEmpty()) {
+                    changePassword(newPassword)
+                }
+            }
+            .setNegativeButton("취소", null)
+            .show()
+    }
+
+    private fun changePassword(newPassword: String) {
+        val user = auth.currentUser
+        if (user != null) {
+            lifecycleScope.launch {
+                try {
+                    user.updatePassword(newPassword).await()
+                    Toast.makeText(this@HomeActivity, "비밀번호가 성공적으로 변경되었습니다.", Toast.LENGTH_SHORT).show()
+                } catch (e: Exception) {
+                    Toast.makeText(this@HomeActivity, "오류: ${e.message} (최근 로그인 상태가 필요할 수 있습니다)", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    // 3. 로그아웃
+    private fun showLogoutDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("로그아웃")
+            .setMessage("정말로 로그아웃 하시겠습니까?")
+            .setPositiveButton("로그아웃") { _, _ ->
+                logout()
+            }
+            .setNegativeButton("취소", null)
+            .show()
+    }
+
+    private fun logout() {
+        auth.signOut()
+        Toast.makeText(this@HomeActivity, "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show()
+
+        val intent = Intent(this@HomeActivity, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+    }
+
+    // 4. 회원 탈퇴
+    private fun showDeleteAccountDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("회원 탈퇴")
+            .setMessage("정말로 탈퇴하시겠습니까? 모든 데이터가 삭제되며 복구할 수 없습니다.")
+            .setPositiveButton("탈퇴") { _, _ ->
+                deleteAccount()
+            }
+            .setNegativeButton("취소", null)
+            .show()
+    }
+
+    private fun deleteAccount() {
+        val user = auth.currentUser
+        val uid = user?.uid
+        val db = Firebase.firestore
+
+        if (user != null && uid != null) {
+            lifecycleScope.launch {
+                try {
+                    // Firestore 데이터 삭제
+                    db.collection("users").document(uid).delete().await()
+
+                    // Auth 계정 삭제
+                    user.delete().await()
+
+                    Toast.makeText(this@HomeActivity, "회원 탈퇴가 완료되었습니다.", Toast.LENGTH_SHORT).show()
+
+                    // 로그인 화면으로 이동
+                    val intent = Intent(this@HomeActivity, MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                } catch (e: Exception) {
+                    Toast.makeText(this@HomeActivity, "탈퇴 실패: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
     }
 
     @Suppress("DEPRECATION")

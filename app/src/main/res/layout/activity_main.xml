@@ -94,6 +94,10 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="📝 간편 회원가입으로 나만의 AI 코칭을 시작하세요." android:textSize="13sp" android:textColor="#5D5FEF" android:layout_marginTop="8dp" android:layout_marginBottom="32dp"/>
 
         <EditText android:id="@+id/etRegEmail" android:layout_width="match_parent" android:layout_height="50dp" android:hint="이메일 주소" android:padding="12dp" android:layout_marginBottom="12dp" android:inputType="textEmailAddress" android:background="@android:drawable/editbox_background_normal"/>
+
+        <!-- Added Name Field -->
+        <EditText android:id="@+id/etRegName" android:layout_width="match_parent" android:layout_height="50dp" android:hint="이름" android:padding="12dp" android:layout_marginBottom="12dp" android:inputType="textPersonName" android:background="@android:drawable/editbox_background_normal"/>
+
         <EditText android:id="@+id/etRegId" android:layout_width="match_parent" android:layout_height="50dp" android:hint="아이디" android:padding="12dp" android:layout_marginBottom="12dp" android:background="@android:drawable/editbox_background_normal"/>
         <EditText android:id="@+id/etRegPw" android:layout_width="match_parent" android:layout_height="50dp" android:hint="비밀번호" android:padding="12dp" android:layout_marginBottom="24dp" android:inputType="textPassword" android:background="@android:drawable/editbox_background_normal"/>
 
