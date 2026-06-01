@@ -114,12 +114,13 @@ class HomeActivity : AppCompatActivity() {
 
         Firebase.firestore.collection("users").document(user.uid).get()
             .addOnSuccessListener { doc ->
-                val nickname = doc.getString("nickname")
+                // nickname 대신 name 필드를 가져오도록 수정
+                val userName = doc.getString("name")
                     ?: user.email?.split("@")?.get(0)
                     ?: "User"
                 val photoUrl = doc.getString("photoUrl")
 
-                headerBinding.tvNickname.text = nickname
+                headerBinding.tvNickname.text = userName // 변수명 맞춰서 세팅
 
                 if (!photoUrl.isNullOrEmpty()) {
                     Glide.with(this)
@@ -162,38 +163,38 @@ class HomeActivity : AppCompatActivity() {
         headerBinding.btnDeleteAccount.setOnClickListener { showDeleteAccountDialog() }
     }
 
-    // 1. 아이디(닉네임) 변경
     private fun showChangeIdDialog() {
         val editText = EditText(this)
-        editText.hint = "새로운 아이디(닉네임) 입력"
+        editText.hint = "새로운 이름 입력"
 
         AlertDialog.Builder(this)
-            .setTitle("아이디 변경")
+            .setTitle("이름 변경")
             .setView(editText)
             .setPositiveButton("변경") { _, _ ->
-                val newNickname = editText.text.toString().trim()
-                if (newNickname.isNotEmpty()) {
-                    changeNickname(newNickname)
+                val newName = editText.text.toString().trim()
+                if (newName.isNotEmpty()) {
+                    changeName(newName) // 이름 변경 함수 호출
                 }
             }
             .setNegativeButton("취소", null)
             .show()
     }
 
-    private fun changeNickname(newNickname: String) {
+    // 💡 Firestore의 'name' 필드를 업데이트하도록 변경
+    private fun changeName(newName: String) {
         val uid = auth.currentUser?.uid
         val db = Firebase.firestore
 
         if (uid != null) {
             lifecycleScope.launch {
                 try {
-                    db.collection("users").document(uid).update("nickname", newNickname).await()
-                    Toast.makeText(this@HomeActivity, "아이디가 변경되었습니다.", Toast.LENGTH_SHORT).show()
+                    // "nickname" 대신 "name" 필드 업데이트
+                    db.collection("users").document(uid).update("name", newName).await()
+                    Toast.makeText(this@HomeActivity, "이름이 변경되었습니다.", Toast.LENGTH_SHORT).show()
 
-                    // 즉시 UI 업데이트
                     val headerView = binding.navView.getHeaderView(0)
                     val headerBinding = NavHeaderUserBinding.bind(headerView)
-                    headerBinding.tvNickname.text = newNickname
+                    headerBinding.tvNickname.text = newName
                 } catch (e: Exception) {
                     Toast.makeText(this@HomeActivity, "오류: ${e.message}", Toast.LENGTH_LONG).show()
                 }

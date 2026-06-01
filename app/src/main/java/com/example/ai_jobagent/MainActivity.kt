@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
             }
             auth.signInWithEmailAndPassword(email, pw)
                 .addOnSuccessListener {
-                    Toast.makeText(this, "로그인 인증 통과!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "로그인 성공!", Toast.LENGTH_SHORT).show()
                     goToResumeWrite()
                 }
                 .addOnFailureListener {
