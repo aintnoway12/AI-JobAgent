@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         auth.signOut()
 
         if (auth.currentUser != null) {
-            goToResumeWrite()
+            goToHome()
         }
 
         binding.btnGoToLogin.setOnClickListener { showLayout(View.GONE, View.VISIBLE, View.GONE) }
@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
             auth.signInWithEmailAndPassword(email, pw)
                 .addOnSuccessListener {
                     Toast.makeText(this, "로그인 인증 통과!", Toast.LENGTH_SHORT).show()
-                    goToResumeWrite()
+                    goToHome()
                 }
                 .addOnFailureListener {
                     Toast.makeText(this, "인증 실패: ${it.message}", Toast.LENGTH_SHORT).show()
@@ -66,12 +66,10 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnRegDone.setOnClickListener {
             val email = binding.etRegEmail.text.toString().trim()
-            val name = binding.etRegName.text.toString().trim() // Added name variable
-            val nickname = binding.etRegId.text.toString().trim()
+            val name = binding.etRegName.text.toString().trim()
             val pw = binding.etRegPw.text.toString().trim()
 
-            // Added name validation
-            if (email.isEmpty() || name.isEmpty() || nickname.isEmpty() || pw.isEmpty()) {
+            if (email.isEmpty() || name.isEmpty() || pw.isEmpty()) {
                 Toast.makeText(this, "모든 정보를 입력해 주세요.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -83,8 +81,7 @@ class MainActivity : AppCompatActivity() {
 
                     val userProfile = hashMapOf(
                         "email" to email,
-                        "name" to name, // Added name to Firestore map
-                        "nickname" to nickname,
+                        "name" to name,
                         "photoUrl" to null,
                         "createdAt" to Timestamp.now()
                     )
@@ -94,7 +91,8 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     Toast.makeText(this@MainActivity, "계정 생성 및 데이터베이스 등록 완료!", Toast.LENGTH_SHORT).show()
-                    goToResumeWrite()
+                    // 회원가입 직후에는 첫 이력서 작성 화면으로 이동하며 이름/이메일을 Intent로 전달
+                    goToResumeWrite(name, email)
 
                 } catch (e: Exception) {
                     Toast.makeText(this@MainActivity, "가입 실패 오류: ${e.message}", Toast.LENGTH_LONG).show()
@@ -109,8 +107,18 @@ class MainActivity : AppCompatActivity() {
         binding.layoutRegister.visibility = reg
     }
 
-    private fun goToResumeWrite() {
+    private fun goToHome() {
         startActivity(Intent(this, HomeActivity::class.java))
+        finish()
+    }
+
+    // MainActivity → ResumeWriteActivity 데이터 전달 (이름, 이메일)
+    private fun goToResumeWrite(name: String, email: String) {
+        val intent = Intent(this, ResumeWriteActivity::class.java).apply {
+            putExtra(ResumeWriteActivity.EXTRA_NAME, name)
+            putExtra(ResumeWriteActivity.EXTRA_EMAIL, email)
+        }
+        startActivity(intent)
         finish()
     }
 }

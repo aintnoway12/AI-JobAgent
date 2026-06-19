@@ -65,11 +65,11 @@ class TechTrendFragment : Fragment() {
             }
         }
 
-        val query = buildQuery(resume)
-        binding.tvTechKeyword.text = "\"$query\" 관련 최신 질문"
+        val queries = buildQueries(resume)
+        binding.tvTechKeyword.text = "\"${queries.joinToString(", ")}\" 관련 최신 질문"
 
         val items = withContext(Dispatchers.IO) {
-            fetchStackOverflow(query)
+            fetchStackOverflowForQueries(queries)
         }
 
         binding.progressBarTech.visibility = View.GONE
@@ -82,18 +82,37 @@ class TechTrendFragment : Fragment() {
         }
     }
 
-    private fun buildQuery(resume: Resume?): String {
-        if (resume == null) return "programming"
-        val skills = resume.skills.filter { it.isNotBlank() }.take(3)
-        val keywords = resume.recommendedKeywords.filter { it.isNotBlank() }.take(2)
-        val combined = (skills + keywords).distinct().take(3)
-        return if (combined.isEmpty()) "programming" else combined.joinToString(" ")
+    // 보유 기술 스택을 개별 검색어로 분리 (전체를 한 번에 검색하지 않음)
+    private fun buildQueries(resume: Resume?): List<String> {
+        if (resume == null) return listOf("programming")
+        val skills = resume.skills.map { it.trim() }.filter { it.isNotBlank() }.distinct().take(5)
+        return if (skills.isEmpty()) listOf("programming") else skills
     }
 
-    private fun fetchStackOverflow(query: String): List<StackOverflowItem> {
+    // 각 기술별로 따로 검색한 뒤 라운드로빈으로 병합 (중복 링크 제거)
+    private fun fetchStackOverflowForQueries(queries: List<String>): List<StackOverflowItem> {
+        val perQuery = queries.map { fetchStackOverflow(it, pageSize = 5) }
+        val merged = LinkedHashMap<String, StackOverflowItem>()
+        var index = 0
+        var added = true
+        while (added) {
+            added = false
+            for (list in perQuery) {
+                if (index < list.size) {
+                    val item = list[index]
+                    merged.putIfAbsent(item.link, item)
+                    added = true
+                }
+            }
+            index++
+        }
+        return merged.values.toList().take(15)
+    }
+
+    private fun fetchStackOverflow(query: String, pageSize: Int = 10): List<StackOverflowItem> {
         return try {
             val encoded = URLEncoder.encode(query, "UTF-8")
-            val urlStr = "${ApiConstants.SO_SEARCH_URL}?order=desc&sort=relevance&q=$encoded&site=stackoverflow&key=${ApiConstants.SO_API_KEY}"
+            val urlStr = "${ApiConstants.SO_SEARCH_URL}?order=desc&sort=relevance&q=$encoded&pagesize=$pageSize&site=stackoverflow&key=${ApiConstants.SO_API_KEY}"
             val conn = URL(urlStr).openConnection() as HttpURLConnection
             conn.requestMethod = "GET"
             conn.connectTimeout = 8000

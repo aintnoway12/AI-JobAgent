@@ -265,10 +265,14 @@ class ResumeFragment : Fragment() {
             setEditMode(false)
 
             // PDF 생성 로직 수행
-            val userName = auth.currentUser?.email?.split("@")?.get(0) ?: "User"
-            val photoUrl = withContext(Dispatchers.IO) {
-                db.collection("users").document(uid).get().await().getString("photoUrl")
+            val userSnap = withContext(Dispatchers.IO) {
+                db.collection("users").document(uid).get().await()
             }
+            // 유저이름(name) 우선, 없으면 이메일 앞부분으로 폴백
+            val userName = userSnap.getString("name")
+                ?: auth.currentUser?.email?.substringBefore("@")
+                ?: "User"
+            val photoUrl = userSnap.getString("photoUrl")
 
             val fileUri = withContext(Dispatchers.IO) {
                 // Resume(Data class) 대신 Map을 썼으므로 Resume 객체로 변환하여 넘기거나,

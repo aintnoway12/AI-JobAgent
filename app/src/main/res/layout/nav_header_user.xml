@@ -46,7 +46,7 @@
         android:id="@+id/btnChangeId"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="아이디(닉네임) 변경"
+        android:text="유저이름 변경"
         android:textColor="#FFFFFF"
         android:textSize="14sp"
         android:paddingVertical="6dp"

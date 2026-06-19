@@ -32,6 +32,10 @@ class HomeActivity : AppCompatActivity() {
     private val aiChatFragment = AiChatFragment()
     private var activeFragment: Fragment = newsFragment
 
+    companion object {
+        const val EXTRA_WELCOME_NAME = "extra_welcome_name"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
@@ -58,6 +62,12 @@ class HomeActivity : AppCompatActivity() {
         setupFragments()
         setupBottomNavigation()
         loadUserInfoIntoDrawer()
+
+        // ResumeWriteActivity → HomeActivity Intent 데이터 수신 (회원가입 직후 환영 메시지)
+        val welcomeName = intent.getStringExtra(EXTRA_WELCOME_NAME)
+        if (!welcomeName.isNullOrBlank()) {
+            Toast.makeText(this, "${welcomeName}님, 환영합니다! 첫 이력서가 생성되었어요.", Toast.LENGTH_LONG).show()
+        }
 
         // 사이드 메뉴 설정 버튼들(변경, 로그아웃, 탈퇴) 클릭 이벤트 등록
         setupHeaderButtons()
@@ -114,12 +124,12 @@ class HomeActivity : AppCompatActivity() {
 
         Firebase.firestore.collection("users").document(user.uid).get()
             .addOnSuccessListener { doc ->
-                val nickname = doc.getString("nickname")
+                val name = doc.getString("name")
                     ?: user.email?.split("@")?.get(0)
                     ?: "User"
                 val photoUrl = doc.getString("photoUrl")
 
-                headerBinding.tvNickname.text = nickname
+                headerBinding.tvNickname.text = name
 
                 if (!photoUrl.isNullOrEmpty()) {
                     Glide.with(this)
@@ -149,7 +159,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     // ==========================================
-    // 설정 관련 로직 (아이디, 비밀번호, 로그아웃, 탈퇴)
+    // 설정 관련 로직 (유저이름, 비밀번호, 로그아웃, 탈퇴)
     // ==========================================
 
     private fun setupHeaderButtons() {
@@ -162,13 +172,13 @@ class HomeActivity : AppCompatActivity() {
         headerBinding.btnDeleteAccount.setOnClickListener { showDeleteAccountDialog() }
     }
 
-    // 1. 아이디(닉네임) 변경
+    // 1. 유저이름(닉네임) 변경
     private fun showChangeIdDialog() {
         val editText = EditText(this)
-        editText.hint = "새로운 아이디(닉네임) 입력"
+        editText.hint = "새로운 유저이름 입력"
 
         AlertDialog.Builder(this)
-            .setTitle("아이디 변경")
+            .setTitle("유저이름 변경")
             .setView(editText)
             .setPositiveButton("변경") { _, _ ->
                 val newNickname = editText.text.toString().trim()
@@ -180,20 +190,20 @@ class HomeActivity : AppCompatActivity() {
             .show()
     }
 
-    private fun changeNickname(newNickname: String) {
+    private fun changeNickname(newName: String) {
         val uid = auth.currentUser?.uid
         val db = Firebase.firestore
 
         if (uid != null) {
             lifecycleScope.launch {
                 try {
-                    db.collection("users").document(uid).update("nickname", newNickname).await()
-                    Toast.makeText(this@HomeActivity, "아이디가 변경되었습니다.", Toast.LENGTH_SHORT).show()
+                    db.collection("users").document(uid).update("name", newName).await()
+                    Toast.makeText(this@HomeActivity, "유저이름이 변경되었습니다.", Toast.LENGTH_SHORT).show()
 
                     // 즉시 UI 업데이트
                     val headerView = binding.navView.getHeaderView(0)
                     val headerBinding = NavHeaderUserBinding.bind(headerView)
-                    headerBinding.tvNickname.text = newNickname
+                    headerBinding.tvNickname.text = newName
                 } catch (e: Exception) {
                     Toast.makeText(this@HomeActivity, "오류: ${e.message}", Toast.LENGTH_LONG).show()
                 }

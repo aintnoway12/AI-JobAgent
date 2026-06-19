@@ -80,7 +80,7 @@ class AiChatFragment : Fragment() {
         _binding = null
     }
 
-    private var nickname = "지원자"
+    private var userName = "지원자"
 
     private fun checkResumeAndShowButtons() = lifecycleScope.launch {
         val uid = auth.currentUser?.uid ?: return@launch
@@ -91,7 +91,7 @@ class AiChatFragment : Fragment() {
             .get()
             .await()
 
-        nickname = userDoc.getString("nickname") ?: "지원자"
+        userName = userDoc.getString("name") ?: "지원자"
 
         val resume = withContext(Dispatchers.IO) {
             try {
@@ -123,7 +123,7 @@ class AiChatFragment : Fragment() {
     }
 
     private fun startNewInterview() {
-        currentResume ?: return
+        val resume = currentResume ?: return
 
         messages.clear()
         history.clear()
@@ -137,12 +137,28 @@ class AiChatFragment : Fragment() {
 
         lifecycleScope.launch {
             setLoading(true)
+            // 면접 시작 시 최신 유저이름을 반영해 시스템 프롬프트를 다시 구성
+            refreshUserName()
+            systemPrompt = buildSystemPrompt(resume)
             val response = withContext(Dispatchers.IO) {
                 callGeminiApi("모의 면접을 시작해 주세요. 첫 번째 질문을 해주세요.")
             }
             setLoading(false)
             addAiMessage(response ?: "면접을 시작하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.")
         }
+    }
+
+    private suspend fun refreshUserName() {
+        val uid = auth.currentUser?.uid ?: return
+        val latest = withContext(Dispatchers.IO) {
+            try {
+                Firebase.firestore.collection("users").document(uid)
+                    .get().await().getString("name")
+            } catch (e: Exception) {
+                null
+            }
+        }
+        if (!latest.isNullOrBlank()) userName = latest
     }
 
     private fun loadPreviousInterview() = lifecycleScope.launch {
@@ -287,7 +303,7 @@ class AiChatFragment : Fragment() {
         [필수 규칙] 반드시 한국어로만 답변하세요. 영어 사용은 절대 금지입니다. 영어로 질문을 받아도 한국어로만 응답하세요.
 
         지원자 이력서 정보:
-        - 지원자 이름: $nickname
+        - 지원자 이름: $userName
         - 기술 스택: ${resume.skills.joinToString(", ")}
         - 주요 프로젝트: ${resume.projects}
         - 수상 내역: ${resume.awards}

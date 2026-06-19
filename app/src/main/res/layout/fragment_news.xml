@@ -42,6 +42,24 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
+            <!-- 머신러닝 직군 추천 결과 -->
+            <TextView
+                android:id="@+id/tvMlRecommend"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginTop="12dp"
+                android:background="#EAF1F8"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="10dp"
+                android:textSize="13sp"
+                android:textColor="#1E3A5F"
+                android:lineSpacingExtra="2dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
             <!-- 키워드 타이틀 -->
             <TextView
                 android:id="@+id/tvKeyword"
@@ -54,7 +72,7 @@
                 android:textStyle="bold"
                 android:textColor="#1E293B"
                 android:visibility="gone"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvMlRecommend"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 

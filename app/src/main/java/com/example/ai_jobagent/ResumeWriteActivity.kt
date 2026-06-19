@@ -35,6 +35,15 @@ class ResumeWriteActivity : AppCompatActivity() {
 
     private var computedKeywords: List<String> = emptyList()
 
+    // MainActivity로부터 Intent로 전달받은 값
+    private var passedName: String? = null
+    private var passedEmail: String? = null
+
+    companion object {
+        const val EXTRA_NAME = "extra_name"
+        const val EXTRA_EMAIL = "extra_email"
+    }
+
 
     private val pickPhoto = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         uri?.let {
@@ -53,6 +62,13 @@ class ResumeWriteActivity : AppCompatActivity() {
         db = Firebase.firestore
         storage = Firebase.storage
         classifier = JobClassifier(this)
+
+        // MainActivity → ResumeWriteActivity Intent 데이터 수신
+        passedName = intent.getStringExtra(EXTRA_NAME)
+        passedEmail = intent.getStringExtra(EXTRA_EMAIL)
+        if (!passedName.isNullOrBlank()) {
+            binding.tvWelcome.text = "✍️ ${passedName}님, 첫 이력서를 작성해 주세요"
+        }
 
         binding.btnPickPhoto.setOnClickListener {
             pickPhoto.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
@@ -169,12 +185,16 @@ class ResumeWriteActivity : AppCompatActivity() {
             Toast.makeText(this@ResumeWriteActivity, "데이터베이스 서버 적재 완료!", Toast.LENGTH_SHORT).show()
 
             val currentUser = auth.currentUser
-            val userName = currentUser?.email?.split("@")?.get(0) ?: "User"
 
-            val photoUrl = withContext(Dispatchers.IO) {
-                val snap = db.collection("users").document(uid).get().await()
-                snap.getString("photoUrl")
+            val snap = withContext(Dispatchers.IO) {
+                db.collection("users").document(uid).get().await()
             }
+            // Intent로 전달받은 이름을 우선 사용하고, 없으면 Firestore의 name, 이메일 순으로 폴백
+            val userName = passedName?.takeIf { it.isNotBlank() }
+                ?: snap.getString("name")
+                ?: currentUser?.email?.substringBefore("@")
+                ?: "User"
+            val photoUrl = snap.getString("photoUrl")
 
             if (!photoUrl.isNullOrEmpty()) {
                 loadImageFromUrlIntoView(photoUrl)
@@ -190,7 +210,14 @@ class ResumeWriteActivity : AppCompatActivity() {
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
             }
+            // ResumeWriteActivity → HomeActivity 데이터 전달 (환영 이름)
+            // HomeActivity를 아래에 깔고 PDF 뷰어를 위에 띄워, 뒤로 가면 홈으로 진입
+            val homeIntent = Intent(this@ResumeWriteActivity, HomeActivity::class.java).apply {
+                putExtra(HomeActivity.EXTRA_WELCOME_NAME, userName)
+            }
+            startActivity(homeIntent)
             startActivity(Intent.createChooser(pdfIntent, "PDF 이력서 확인하기"))
+            finish()
 
         } catch (e: Exception) {
             Toast.makeText(

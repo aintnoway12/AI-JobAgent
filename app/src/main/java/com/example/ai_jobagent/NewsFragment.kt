@@ -70,6 +70,7 @@ class NewsFragment : Fragment() {
         binding.progressBar.visibility = View.VISIBLE
         binding.vpNews.visibility = View.GONE
         binding.tvKeyword.visibility = View.GONE
+        binding.tvMlRecommend.visibility = View.GONE
         binding.tvEmptyState.visibility = View.GONE
 
         val resume = withContext(Dispatchers.IO) {
@@ -91,7 +92,24 @@ class NewsFragment : Fragment() {
             return@launch
         }
 
-        val keyword = resume.recommendedKeywords.firstOrNull() ?: "취업"
+        // 머신러닝 기반 직군 추천 결과 표시
+        val recommendedJobs = resume.recommendedKeywords
+        if (recommendedJobs.isNotEmpty()) {
+            val name = withContext(Dispatchers.IO) {
+                try {
+                    Firebase.firestore.collection("users").document(uid)
+                        .get().await().getString("name")
+                } catch (e: Exception) {
+                    null
+                }
+            } ?: auth.currentUser?.email?.substringBefore("@") ?: "회원"
+
+            binding.tvMlRecommend.text =
+                "${name}님의 머신러닝 기반 직군 추천 결과는 ${recommendedJobs.joinToString(", ")} 입니다."
+            binding.tvMlRecommend.visibility = View.VISIBLE
+        }
+
+        val keyword = recommendedJobs.firstOrNull() ?: "취업"
 
         val newsList = withContext(Dispatchers.IO) {
             fetchNaverNews(keyword)
