@@ -45,6 +45,11 @@ class TechTrendFragment : Fragment() {
         _binding = null
     }
 
+    // 화면 재진입 시 호출되어 기술 스택을 다시 랜덤으로 골라 검색
+    fun reload() {
+        if (_binding != null) loadTechTrends()
+    }
+
     private fun loadTechTrends() = lifecycleScope.launch {
         val uid = Firebase.auth.currentUser?.uid ?: return@launch
 
@@ -82,11 +87,13 @@ class TechTrendFragment : Fragment() {
         }
     }
 
-    // 보유 기술 스택을 개별 검색어로 분리 (전체를 한 번에 검색하지 않음)
+    // 보유 기술 스택이 여러 개면 렌더링될 때마다 랜덤으로 하나만 골라 검색
     private fun buildQueries(resume: Resume?): List<String> {
         if (resume == null) return listOf("programming")
-        val skills = resume.skills.map { it.trim() }.filter { it.isNotBlank() }.distinct().take(5)
-        return if (skills.isEmpty()) listOf("programming") else skills
+        val skills = resume.skills.map { it.trim() }.filter { it.isNotBlank() }.distinct()
+        return if (skills.isEmpty()) listOf("" +
+                "" +
+                "programming") else listOf(skills.random())
     }
 
     // 각 기술별로 따로 검색한 뒤 라운드로빈으로 병합 (중복 링크 제거)

@@ -56,6 +56,7 @@ class NewsFragment : Fragment() {
         super.onHiddenChanged(hidden)
         if (!hidden && _binding != null) {
             loadNewsData()
+            (childFragmentManager.findFragmentById(R.id.techTrendContainer) as? TechTrendFragment)?.reload()
         }
     }
 
@@ -109,7 +110,7 @@ class NewsFragment : Fragment() {
             binding.tvMlRecommend.visibility = View.VISIBLE
         }
 
-        val keyword = recommendedJobs.firstOrNull() ?: "취업"
+        val keyword = recommendedJobs.randomOrNull() ?: "취업"
 
         val newsList = withContext(Dispatchers.IO) {
             fetchNaverNews(keyword)
