@@ -2,7 +2,6 @@ package com.example.ai_jobagent
 
 import android.content.ContentValues
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
@@ -15,6 +14,7 @@ import android.provider.MediaStore
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.util.Log
+import com.bumptech.glide.Glide
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
@@ -119,31 +119,17 @@ class ResumePdfGenerator(private val ctx: Context) {
 
         if (!imageUrl.isNullOrBlank()) {
             try {
-                val url = URL(imageUrl)
-                val connection = url.openConnection() as HttpURLConnection
-                connection.requestMethod = "GET"
-                connection.connectTimeout = 5000
-                connection.readTimeout = 5000
-                connection.doInput = true
-                connection.connect()
-
-                if (connection.responseCode == HttpURLConnection.HTTP_OK) {
-                    connection.inputStream.use { stream ->
-                        val bitmap = BitmapFactory.decodeStream(stream)
-                        if (bitmap != null) {
-                            canvas.drawBitmap(bitmap, null, photoRect, null)
-                            canvas.drawRect(photoRect, photoBorderPaint)
-                            bitmap.recycle()
-                            Log.d("ResumePdfGenerator", "이미지 PDF 렌더링 성공")
-                        } else {
-                            Log.e("ResumePdfGenerator", "비트맵 디코딩 실패")
-                        }
-                    }
-                } else {
-                    Log.e("ResumePdfGenerator", "HTTP 에러 코드: ${connection.responseCode}")
-                }
+                // Glide로 이미지 다운로드/디코딩 (캐싱 이득, 이미 IO 스레드이므로 동기 실행)
+                val bitmap = Glide.with(ctx)
+                    .asBitmap()
+                    .load(imageUrl)
+                    .submit()
+                    .get()
+                canvas.drawBitmap(bitmap, null, photoRect, null)
+                canvas.drawRect(photoRect, photoBorderPaint)
+                Log.d("ResumePdfGenerator", "Glide 이미지 PDF 렌더링 성공")
             } catch (e: Exception) {
-                Log.e("ResumePdfGenerator", "네트워크/이미지 다운로드 예외 발생", e)
+                Log.e("ResumePdfGenerator", "Glide 이미지 로드 실패", e)
             }
         } else {
             Log.w("ResumePdfGenerator", "imageUrl이 비어있거나 null입니다.")
