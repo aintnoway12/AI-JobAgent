@@ -1,4 +1,4 @@
-# JobCoach Ai
+# JobCoach AI
 
 AI 기반 취업 준비 지원 Android 애플리케이션 — 이력서 작성부터 AI 직군 추천,
 취업 뉴스/기술 트렌드 큐레이션, AI 모의 면접, PDF 이력서 생성까지 한 번에
